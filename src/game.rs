@@ -89,6 +89,7 @@ pub struct Game {
     current_player: PlayerSymbol,
     pub board_layout: [[Option<PlayerSymbol>; 3]; 3],
     last_played: BoardCoordinate,
+    turn: usize,
 }
 
 impl Game {
@@ -101,6 +102,7 @@ impl Game {
                 [None, None, None],
             ],
             last_played: (0, 0),
+            turn: 1,
         }
     }
 
@@ -113,6 +115,7 @@ impl Game {
         self.board_layout[y][x] = Some(self.current_player);
         self.current_player = self.current_player.switch();
         self.last_played = (x, y);
+        self.turn += 1;
     }
 
     pub fn get_current_player(&self) -> PlayerSymbol {
@@ -289,7 +292,7 @@ impl Game {
             self.display_symbol(1, 1),
             self.display_symbol(2, 1),
             "Turn",
-            "0".yellow().bold(),
+            self.turn.to_string().yellow().bold(),
             self.current_player.display().bold(),
             self.display_symbol(0, 2),
             self.display_symbol(1, 2),
@@ -301,11 +304,11 @@ impl Game {
     pub fn get_game_over_formatted(&self, result: GameResult) -> String {
         format!(
             r#"
-{} │ {} │ {}       {} {}
-──┼───┼──
-{} │ {} │ {}       Game {}
-──┼───┼──       {}
-{} │ {} │ {}"#,
+    {} │ {} │ {}       {} {}
+    ──┼───┼──
+    {} │ {} │ {}       Game {}
+    ──┼───┼──       {}
+    {} │ {} │ {}"#,
             self.display_symbol(0, 0),
             self.display_symbol(1, 0),
             self.display_symbol(2, 0),
